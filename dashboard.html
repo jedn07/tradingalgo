@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backtest Results Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="main.js" type="module"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Backtest Results Dashboard</h1>
+
+        <div id="results">
+            <div class="metrics-grid" id="metrics"></div>
+            
+            <div class="chart-container">
+                <div class="chart-title">Equity Curve</div>
+                <div class="chart-wrapper">
+                    <canvas id="equityChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">Individual Trade P&L</div>
+                <div class="chart-wrapper">
+                    <canvas id="tradesChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <div class="chart-title">Recent Trades</div>
+                <table id="tradesTable"></table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
