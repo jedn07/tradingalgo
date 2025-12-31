@@ -9,7 +9,7 @@ window.addEventListener('DOMContentLoaded', function () {
 async function autoLoadCSVs() {
     try {
         // Try to load trades CSV
-        const tradesResponse = await fetch('backtest_trades.csv');
+        const tradesResponse = await fetch('data/backtest_trades.csv');
         if (tradesResponse.ok) {
             const tradesText = await tradesResponse.text();
             tradesData = parseCSV(tradesText);
@@ -17,7 +17,7 @@ async function autoLoadCSVs() {
         }
 
         // Try to load equity CSV
-        const equityResponse = await fetch('backtest_equity_curve.csv');
+        const equityResponse = await fetch('data/backtest_equity_curve.csv');
         if (equityResponse.ok) {
             const equityText = await equityResponse.text();
             equityData = parseCSV(equityText);

@@ -8,6 +8,8 @@ import http.server
 import socketserver
 import threading
 import time
+from backtest import BacktestEngine
+from strategy import Strategy
 
 
 def start_server(port=8000):
@@ -31,8 +33,19 @@ def main():
     print("="*60)
     
     # Import and run backtest
-    import engine
-    
+    # Initialize strategy and engine
+    strat = Strategy()
+    eng = BacktestEngine(strategy=strat, initial_capital=100000)
+
+    # Run backtest with real data
+    eng.run_backtest(
+        start_date=None,
+        end_date=None
+    )
+
+    print("\n" + "="*60)
+    print("Backtest complete")
+    ("="*60)
     print("\nStarting local web server...")
     port = 8000
     start_server(port)

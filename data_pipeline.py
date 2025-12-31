@@ -68,7 +68,7 @@ class DataPipeline:
             print(f"Error downloading data: {e}")
         
     def load_data_local(self):
-        self.data=pd.read_csv("EURUSD5.csv", sep="\t", index_col=0, header=None)
+        self.data=pd.read_csv("data/EURUSD5.csv", sep="\t", index_col=0, header=None)
         self.data.columns=["close", "high", "low", "open", "volume"]
         print(self.data)
 
@@ -113,4 +113,4 @@ class DataPipeline:
             # Clean up temporary columns
             self.data.drop(['high_low', 'high_close', 'low_close', 'true_range'], axis=1, inplace=True)
 
-            print(f"\n✓ Indicators added: EMA 9, EMA 21, ATR 14, ATR Avg, SMA 20, SMA 50, Momentum 10")        
+            print(f"\nIndicators added: EMA 9, EMA 21, ATR 14, ATR Avg, SMA 20, SMA 50, Momentum 10")        

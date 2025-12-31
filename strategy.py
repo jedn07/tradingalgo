@@ -26,16 +26,16 @@ class Strategy:
     
     # Strategy parameters
     symbol = "EURUSD"
-    timeframe = "60m"
+    timeframe = "5m"
     
     # EMA parameters
     fast_ema_period = 9
     slow_ema_period = 21
     
     # Risk parameters
-    risk_per_trade = 0.02  # Risk 2% of account per trade
-    atr_stop_multiplier = 2.0  # Wider stops at 2x ATR (was 1.5)
-    reward_risk_ratio = 2.5  # Moderate profit target at 2.5x the risk (was 3.0)
+    risk_per_trade = 0.005  # Risk 2% of account per trade
+    atr_stop_multiplier = 2.5  # Wider stops at 2x ATR (was 1.5)
+    reward_risk_ratio = 1.5  # Moderate profit target at 2.5x the risk (was 3.0)
     
     # Filter parameters
     use_trend_filter = True  # Require price > 50 SMA
@@ -73,27 +73,18 @@ class Strategy:
             return False
         
         # === CROSSOVER DETECTION ===
-        was_below = previous['ema_9'] <= previous['ema_21']
-        is_above = current['ema_9'] > current['ema_21']
-        bullish_crossover = was_below and is_above
-        
-        # Don't enter immediately on crossover - wait for confirmation
-        # Check if crossover happened within last few bars (not right now)
-        recent_crossover = False
-        if bullish_crossover:
-            recent_crossover = True
-        else:
-            # Check if we're still in bullish territory after recent crossover
-            if current['ema_9'] > current['ema_21']:
-                # Look back to see if there was a crossover recently
-                for lookback in range(1, 6):  # Check last 5 bars
-                    if idx - lookback < 0:
-                        break
-                    prev = data.iloc[idx - lookback]
-                    prev_prev = data.iloc[idx - lookback - 1]
-                    if prev_prev['ema_9'] <= prev_prev['ema_21'] and prev['ema_9'] > prev['ema_21']:
-                        recent_crossover = True
-                        break
+        recent_crossover=False
+        # Check if we're in bullish territory 
+        if current['ema_9'] > current['ema_21']:
+            # Look back to see if there was a crossover recently
+            for lookback in range(0, 6):  # Check last 6 bars (including current)
+                if idx - lookback < 0:
+                    break
+                prev = data.iloc[idx - lookback]
+                prev_prev = data.iloc[idx - lookback - 1]
+                if prev_prev['ema_9'] <= prev_prev['ema_21'] and prev['ema_9'] > prev['ema_21']:
+                    recent_crossover = True
+                    break
         
         if not recent_crossover:
             return False
@@ -118,17 +109,16 @@ class Strategy:
             # Require strong positive momentum
             strong_momentum = current['momentum_10'] > 0
             # Also check momentum is accelerating
-            prev_momentum = previous['momentum_10']
-            momentum_increasing = current['momentum_10'] > prev_momentum
+            momentum_increasing = current['momentum_10'] > previous['momentum_10']
             if not (strong_momentum and momentum_increasing):
                 return False
         
         # === FILTER 4: EMA SLOPE ===
         if self.use_ema_slope_filter:
             # Both EMAs should be trending up (not flat)
-            ema9_slope = current['ema_9'] > previous['ema_9']
-            ema21_slope = current['ema_21'] > previous['ema_21']
-            if not (ema9_slope and ema21_slope):
+            ema9_slope_positive = current['ema_9'] > previous['ema_9']
+            ema21_slope_positive = current['ema_21'] > previous['ema_21']
+            if not (ema9_slope_positive and ema21_slope_positive):
                 return False
         
         # === FILTER 5: PULLBACK (NEW!) ===
@@ -217,8 +207,8 @@ class Strategy:
         
         # === EXIT 5: MOMENTUM REVERSAL ===
         # Exit if strong negative momentum appears
-        if current['momentum_10'] < -current['atr_14']:
-            return True, 'momentum_reversal'
+        #if current['momentum_10'] < -current['atr_14']:
+        #    return True, 'momentum_reversal'
         
         return False, None
     
